@@ -21,7 +21,7 @@ function renderFromXML(xmlDoc) {
         const icon = document.createElement('p');
         icon.className = 'material-icons';
         icon.setAttribute('aria-hidden', 'true');
-        icon.innerText = 'warning';
+        icon.innerText = 'error_outline';
         status_alert.append(icon); 
         
         const heading = document.createElement('h2');
@@ -32,8 +32,6 @@ function renderFromXML(xmlDoc) {
         body.className = 'body';        
         body.innerHTML = alertEl.getElementsByTagName('description')[0].innerHTML;
         status_alert.append(body); 
-        
-        
         
         frag.appendChild(status_alert);
     });
@@ -61,7 +59,7 @@ async function fetchData() {
         
         statusEl.textContent = 'Last updated: ' + new Date().toLocaleTimeString();
     } catch (err) {
-        statusEl.textContent = 'Error: ' + err.message + '. If you see a CORS error, run a local proxy.';
+        statusEl.textContent = 'Error: ';
         dataEl.textContent = '';
     }
 }

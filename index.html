@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Rave Poll</title>
+</head>
+<body>
+  <h1>Rave Data</h1>
+  <div id="status">Initializing...</div>
+  <div id="data"></div>
+
+  <script>
+    const url = 'https://content.getrave.com/cap/wwu/channel1';
+    const dataEl = document.getElementById('data');
+    const statusEl = document.getElementById('status');
+
+    function renderFromXML(xmlDoc) {
+      const alerts = Array.from(xmlDoc.getElementsByTagName('alert'));
+
+      // If no <alert> elements, fall back to showing raw XML
+      if (!alerts.length) {
+        dataEl.textContent = new XMLSerializer().serializeToString(xmlDoc);
+        return;
+      }
+
+      dataEl.innerHTML = '';
+      const frag = document.createDocumentFragment();
+
+      alerts.forEach((alertEl, idx) => {
+        const container = document.createElement('div');
+        container.className = 'alert';
+
+        // Optional header for each alert
+        const header = document.createElement('h2');
+        header.className = 'alert-index';
+        header.textContent = 'Alert ' + (idx + 1);
+        container.appendChild(header);
+
+        // Render attributes on the <alert> itself
+        Array.from(alertEl.attributes).forEach(attr => {
+          const d = document.createElement('div');
+          d.className = attr.name;
+          d.textContent = attr.value;
+          container.appendChild(d);
+        });
+
+        // Render direct child elements of <alert> as divs with class = tag name
+        Array.from(alertEl.querySelectorAll(':scope > *')).forEach(child => {
+          const c = document.createElement('div');
+          // use localName to avoid namespace prefixes and normalize to lowercase
+          c.className = (child.localName || child.tagName).toLowerCase();
+          c.textContent = child.textContent.trim();
+          container.appendChild(c);
+        });
+
+        frag.appendChild(container);
+      });
+
+      dataEl.appendChild(frag);
+    }
+
+    async function fetchData() {
+      try {
+        statusEl.textContent = 'Fetching...';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+
+        // Try to parse as XML
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(text, 'application/xml');
+        const parserError = xmlDoc.getElementsByTagName('parsererror')[0];
+        if (parserError) {
+          // Not valid XML; show raw text
+          dataEl.textContent = text;
+        } else {
+          renderFromXML(xmlDoc);
+        }
+
+        statusEl.textContent = 'Last updated: ' + new Date().toLocaleTimeString();
+      } catch (err) {
+        statusEl.textContent = 'Error: ' + err.message + '. If you see a CORS error, run a local proxy.';
+        dataEl.textContent = '';
+      }
+    }
+
+    // Fetch immediately, then every 15 seconds
+    fetchData();
+    setInterval(fetchData, 15000);
+  </script>
+</body>
+</html>

@@ -18,15 +18,23 @@ function renderFromXML(xmlDoc) {
         const status_alert = document.createElement('div');
         status_alert.className = 'status-alert';     
         
-        const body = document.createElement('div');
-        body.className = 'body';
-        status_alert.append(body); 
-        body.innerHTML = alertEl.getElementsByTagName('description')[0].innerHTML;
-
+        const icon = document.createElement('p');
+        icon.className = 'material-icons';
+        icon.setAttribute('aria-hidden', 'true');
+        icon.innerText = 'warning';
+        status_alert.append(icon); 
+        
         const heading = document.createElement('h2');
         heading.textContent = alertEl.getElementsByTagName('headline')[0].textContent;
-        body.prepend(heading);
-
+        status_alert.append(heading);
+        
+        const body = document.createElement('div');
+        body.className = 'body';        
+        body.innerHTML = alertEl.getElementsByTagName('description')[0].innerHTML;
+        status_alert.append(body); 
+        
+        
+        
         frag.appendChild(status_alert);
     });
     

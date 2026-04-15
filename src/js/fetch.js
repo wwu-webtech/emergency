@@ -64,6 +64,6 @@ async function fetchData() {
     }
 }
 
-// Fetch immediately, then every 15 seconds
+// Fetch immediately, then every 30 seconds
 fetchData();
-setInterval(fetchData, 15000);
+setInterval(fetchData, 30000);

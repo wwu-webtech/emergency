@@ -46,12 +46,7 @@ async function fetchData() {
         const requestUrl = url + (url.includes('?') ? '&' : '?') + '_=' + Date.now();
         console.log(requestUrl);
         const res = await fetch(requestUrl, {
-            cache: 'no-store',
-            headers: {
-                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                'Pragma': 'no-cache',
-                'Expires': '0'
-            }
+            cache: 'no-store'
         });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const text = await res.text();

@@ -44,6 +44,7 @@ async function fetchData() {
         statusEl.textContent = 'Fetching...';
         // Add a cache-busting query param and request no-store to avoid browser cache
         const requestUrl = url + (url.includes('?') ? '&' : '?') + '_=' + Date.now();
+        console.log(requestUrl);
         const res = await fetch(requestUrl, {
             cache: 'no-store',
             headers: {

@@ -42,7 +42,11 @@ function renderFromXML(xmlDoc) {
 async function fetchData() {
     try {
         statusEl.textContent = 'Fetching...';
-        const res = await fetch(url);
+        // Add a cache-busting query param and request no-store to avoid browser cache
+        const requestUrl = url + (url.includes('?') ? '&' : '?') + '_=' + Date.now();
+        const res = await fetch(requestUrl, {
+            cache: 'no-store'
+        });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const text = await res.text();
         
